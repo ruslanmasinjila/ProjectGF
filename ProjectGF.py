@@ -93,8 +93,36 @@ def getSignals(rates_frame,strTimeframe):
     averageNegativeLoss50 = ((-1)*rates_frame["delta"].tail(50)[rates_frame["delta"]<0].sum( ))/50
     RS50  = averagePositiveGain50/averageNegativeLoss50
     RSI50 = 100 - (100/(1+RS50))
-    print(rates_frame)
-    print(RSI50)
+    
+    averagePositiveGain45 = (rates_frame["delta"].tail(45)[rates_frame["delta"]>0].sum( ))/45
+    averageNegativeLoss45 = ((-1)*rates_frame["delta"].tail(45)[rates_frame["delta"]<0].sum( ))/45
+    RS45  = averagePositiveGain45/averageNegativeLoss45
+    RSI45 = 100 - (100/(1+RS45))
+    
+    averagePositiveGain40 = (rates_frame["delta"].tail(40)[rates_frame["delta"]>0].sum( ))/40
+    averageNegativeLoss40 = ((-1)*rates_frame["delta"].tail(40)[rates_frame["delta"]<0].sum( ))/40
+    RS40  = averagePositiveGain40/averageNegativeLoss40
+    RSI40 = 100 - (100/(1+RS40))
+    
+    averagePositiveGain35 = (rates_frame["delta"].tail(35)[rates_frame["delta"]>0].sum( ))/35
+    averageNegativeLoss35 = ((-1)*rates_frame["delta"].tail(35)[rates_frame["delta"]<0].sum( ))/35
+    RS35  = averagePositiveGain35/averageNegativeLoss35
+    RSI35 = 100 - (100/(1+RS35))
+    
+    averagePositiveGain30 = (rates_frame["delta"].tail(30)[rates_frame["delta"]>0].sum( ))/30
+    averageNegativeLoss30 = ((-1)*rates_frame["delta"].tail(30)[rates_frame["delta"]<0].sum( ))/30
+    RS30  = averagePositiveGain30/averageNegativeLoss30
+    RSI30 = 100 - (100/(1+RS30))
+    
+    averagePositiveGain25 = (rates_frame["delta"].tail(25)[rates_frame["delta"]>0].sum( ))/25
+    averageNegativeLoss25 = ((-1)*rates_frame["delta"].tail(25)[rates_frame["delta"]<0].sum( ))/25
+    RS25  = averagePositiveGain25/averageNegativeLoss25
+    RSI25 = 100 - (100/(1+RS25))
+    
+    averagePositiveGain20 = (rates_frame["delta"].tail(20)[rates_frame["delta"]>0].sum( ))/20
+    averageNegativeLoss20 = ((-1)*rates_frame["delta"].tail(20)[rates_frame["delta"]<0].sum( ))/20
+    RS20  = averagePositiveGain20/averageNegativeLoss20
+    RSI20 = 100 - (100/(1+RS20))
 
 
 # In[ ]:
