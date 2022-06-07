@@ -62,15 +62,24 @@ with open('instruments.txt') as f:
 
 
 # TIMEFRAMES
-mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
-strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
+mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1,W1,MN1]
+strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1","W1","MN1"]
 
-numCandles     = 50
-offset = 1
+# TIMEFRAMES
+mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15]
+strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15"]
 
-RainbowSignals =[]
-RainbowSignalsTF =[]
+numCandles     = 51
+offset         = 1
+
+RSIRainbowSignals   = []
+RSIRainbowSignalsTF = []
 ##########################################################################################
+
+# For testing
+currency_pairs = ["EURUSD"]
+mt5Timeframe   = [M1]
+strTimeframe   = ["M1"]
 
 
 # In[ ]:
@@ -78,47 +87,13 @@ RainbowSignalsTF =[]
 
 def getSignals(rates_frame,strTimeframe):
     
-    fractalCandle = -3
+    rates_frame["delta"] = rates_frame["close"].diff()
     
-    Time, Open, Close, High, Low = getTOCHL(rates_frame)
-    
-    ######################################################################################
-    
-    SMA50 = np.mean(Close)
-    SMA45 = np.mean(Close[5:])
-    SMA40 = np.mean(Close[10:])
-    SMA35 = np.mean(Close[15:])
-    SMA30 = np.mean(Close[20:])
-    SMA25 = np.mean(Close[25:])
-    SMA20 = np.mean(Close[30:])
-    
-    if(SMA45<SMA50 and SMA40<SMA45 and SMA35<SMA40 and SMA30<SMA35 and SMA25<SMA30 and SMA20<SMA25):
-        if(strTimeframe=="M1"):
-            if(High[fractalCandle]<SMA50):
-                if(High[fractalCandle]>High[fractalCandle+1] and
-                   High[fractalCandle]>High[fractalCandle+2] and
-                   High[fractalCandle]>High[fractalCandle-2] and
-                   High[fractalCandle]>High[fractalCandle-1]):
-                    RainbowSignals.append("SELL")
-                    RainbowSignalsTF.append(strTimeframe)
-        else:
-            RainbowSignals.append("SELL")
-            RainbowSignalsTF.append(strTimeframe)
-                
-        
-    if(SMA45>SMA50 and SMA40>SMA45 and SMA35>SMA40 and SMA30>SMA35 and SMA25>SMA30 and SMA20>SMA25):
-        if(strTimeframe=="M1"):
-            if(Low[fractalCandle]>SMA50):
-                if(Low[fractalCandle]<Low[fractalCandle+1] and
-                   Low[fractalCandle]<Low[fractalCandle+2] and
-                   Low[fractalCandle]<Low[fractalCandle-2] and
-                   Low[fractalCandle]<Low[fractalCandle-1]):
-                    RainbowSignals.append("BUY")
-                    RainbowSignalsTF.append(strTimeframe)
-        else:
-            RainbowSignals.append("BUY")
-            RainbowSignalsTF.append(strTimeframe)
-                
+    sumDeltaPositive50 = rates_frame["delta"].tail(50)[rates_frame["delta"]>0].sum( )
+    sumDeltaNegative50 = (-1)*rates_frame["delta"].tail(50)[rates_frame["delta"]<0].sum( )
+    print(rates_frame)
+    print(sumDeltaPositive50)
+    print(sumDeltaNegative50)
 
 
 # In[ ]:
@@ -130,20 +105,6 @@ def getRates(currency_pair, mt5Timeframe, numCandles):
     rates_frame =  mt5.copy_rates_from_pos(currency_pair, mt5Timeframe, offset, numCandles)
     rates_frame = pd.DataFrame(rates_frame)
     return rates_frame
-
-##########################################################################################
-
-
-# In[ ]:
-
-
-# Decomposes the DataFrame into individual lists for Time, Close, High and Low
-def getTOCHL(rates_frame):
-    return  (list(rates_frame["time"]), 
-            list(rates_frame["open"]), 
-            list(rates_frame["close"]),
-            list(rates_frame["high"]),
-            list(rates_frame["low"]))
 
 ##########################################################################################
 
@@ -165,10 +126,10 @@ while(True):
         for t in range(len(mt5Timeframe)):
             rates_frame = getRates(cp, mt5Timeframe[t], numCandles)
             getSignals(rates_frame,strTimeframe[t])
-        if(all(x == RainbowSignals[0] for x in RainbowSignals)):
-            if(RainbowSignalsTF[0]=="M1"):
-                display+=" ".join(RainbowSignals)+"\n"
-                display+=" ".join(RainbowSignalsTF)+"\n"
+        if(all(x == RSIRainbowSignals[0] for x in RSIRainbowSignals)):
+            if(len(RSIRainbowSignals)==len(mt5Timeframe)):
+                display+=" ".join(RSIRainbowSignals)+"\n"
+                display+=" ".join(RSIRainbowSignalsTF)+"\n"
                 winsound.Beep(freq, duration)
                     
         display+="==============================\n"
