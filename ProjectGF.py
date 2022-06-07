@@ -62,8 +62,8 @@ with open('instruments.txt') as f:
 
 
 # TIMEFRAMES
-mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1,W1,MN1]
-strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1","W1","MN1"]
+#mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1,W1,MN1]
+#strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1","W1","MN1"]
 
 # TIMEFRAMES
 mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15]
@@ -75,11 +75,6 @@ offset         = 1
 RSIRainbowSignals   = []
 RSIRainbowSignalsTF = []
 ##########################################################################################
-
-# For testing
-currency_pairs = ["EURUSD"]
-mt5Timeframe   = [M1]
-strTimeframe   = ["M1"]
 
 
 # In[ ]:
@@ -123,6 +118,14 @@ def getSignals(rates_frame,strTimeframe):
     averageNegativeLoss20 = ((-1)*rates_frame["delta"].tail(20)[rates_frame["delta"]<0].sum( ))/20
     RS20  = averagePositiveGain20/averageNegativeLoss20
     RSI20 = 100 - (100/(1+RS20))
+    
+    if(RSI50<RSI45 and RSI45<RSI40 and RSI40<RSI35 and RSI35<RSI30 and RSI30<RSI25 and RSI25<RSI20):
+        RSIRainbowSignals.append("BUY")
+        RSIRainbowSignals.append(strTimeframe)
+        
+    if(RSI50>RSI45 and RSI45>RSI40 and RSI40>RSI35 and RSI35>RSI30 and RSI30>RSI25 and RSI25>RSI20):
+        RSIRainbowSignals.append("SELL")
+        RSIRainbowSignals.append(strTimeframe)
 
 
 # In[ ]:
