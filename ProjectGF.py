@@ -89,11 +89,12 @@ def getSignals(rates_frame,strTimeframe):
     
     rates_frame["delta"] = rates_frame["close"].diff()
     
-    sumDeltaPositive50 = rates_frame["delta"].tail(50)[rates_frame["delta"]>0].sum( )
-    sumDeltaNegative50 = (-1)*rates_frame["delta"].tail(50)[rates_frame["delta"]<0].sum( )
+    averagePositiveGain50 = (rates_frame["delta"].tail(50)[rates_frame["delta"]>0].sum( ))/50
+    averageNegativeLoss50 = ((-1)*rates_frame["delta"].tail(50)[rates_frame["delta"]<0].sum( ))/50
+    RS50  = averagePositiveGain50/averageNegativeLoss50
+    RSI50 = 100 - (100/(1+RS50))
     print(rates_frame)
-    print(sumDeltaPositive50)
-    print(sumDeltaNegative50)
+    print(RSI50)
 
 
 # In[ ]:
