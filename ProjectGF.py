@@ -63,10 +63,9 @@ with open('instruments.txt') as f:
 
 
 # TIMEFRAMES
-#mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1,W1,MN1]
-#strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1","W1","MN1"]
+#mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
+#strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
 
-# TIMEFRAMES
 mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15]
 strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15"]
 
@@ -140,8 +139,8 @@ while(True):
             getSignals(rates_frame,strTimeframe[t])
         if(all(x == RSIRainbowSignals[0] for x in RSIRainbowSignals)):
             if(len(RSIRainbowSignals)==len(mt5Timeframe)):
-                display+=" ".join(RSIRainbowSignals)+"\n"
-                display+=" ".join(RSIRainbowSignalsTF)+"\n"
+                display+=RSIRainbowSignals[0]+" *************** "+"\n"
+                display+=RSIRainbowSignalsTF[0]+" > "+RSIRainbowSignalsTF[-1]+"\n"
                 winsound.Beep(freq, duration)
 
         display+="==============================\n"
