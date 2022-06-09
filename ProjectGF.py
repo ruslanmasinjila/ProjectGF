@@ -10,6 +10,7 @@
 ##########################################################################################
 import MetaTrader5 as mt5
 import pandas as pd
+import pandas_ta as ta
 import numpy as np
 import time
 import os
@@ -81,51 +82,24 @@ RSIRainbowSignalsTF = []
 
 
 def getSignals(rates_frame,strTimeframe):
+    rsi50 = ta.rsi(rates_frame["close"],length=50).tail(1).item()
+    rsi45 = ta.rsi(rates_frame["close"],length=45).tail(1).item()
+    rsi40 = ta.rsi(rates_frame["close"],length=40).tail(1).item()
+    rsi35 = ta.rsi(rates_frame["close"],length=35).tail(1).item()
+    rsi30 = ta.rsi(rates_frame["close"],length=30).tail(1).item()
+    rsi25 = ta.rsi(rates_frame["close"],length=25).tail(1).item()
+    rsi20 = ta.rsi(rates_frame["close"],length=20).tail(1).item()
     
-    rates_frame["delta"] = rates_frame["close"].diff()
-    
-    averagePositiveGain50 = (rates_frame["delta"].tail(50)[rates_frame["delta"]>0].sum( ))/50
-    averageNegativeLoss50 = ((-1)*rates_frame["delta"].tail(50)[rates_frame["delta"]<0].sum( ))/50
-    RS50  = averagePositiveGain50/averageNegativeLoss50
-    RSI50 = 100 - (100/(1+RS50))
-    
-    averagePositiveGain45 = (rates_frame["delta"].tail(45)[rates_frame["delta"]>0].sum( ))/45
-    averageNegativeLoss45 = ((-1)*rates_frame["delta"].tail(45)[rates_frame["delta"]<0].sum( ))/45
-    RS45  = averagePositiveGain45/averageNegativeLoss45
-    RSI45 = 100 - (100/(1+RS45))
-    
-    averagePositiveGain40 = (rates_frame["delta"].tail(40)[rates_frame["delta"]>0].sum( ))/40
-    averageNegativeLoss40 = ((-1)*rates_frame["delta"].tail(40)[rates_frame["delta"]<0].sum( ))/40
-    RS40  = averagePositiveGain40/averageNegativeLoss40
-    RSI40 = 100 - (100/(1+RS40))
-    
-    averagePositiveGain35 = (rates_frame["delta"].tail(35)[rates_frame["delta"]>0].sum( ))/35
-    averageNegativeLoss35 = ((-1)*rates_frame["delta"].tail(35)[rates_frame["delta"]<0].sum( ))/35
-    RS35  = averagePositiveGain35/averageNegativeLoss35
-    RSI35 = 100 - (100/(1+RS35))
-    
-    averagePositiveGain30 = (rates_frame["delta"].tail(30)[rates_frame["delta"]>0].sum( ))/30
-    averageNegativeLoss30 = ((-1)*rates_frame["delta"].tail(30)[rates_frame["delta"]<0].sum( ))/30
-    RS30  = averagePositiveGain30/averageNegativeLoss30
-    RSI30 = 100 - (100/(1+RS30))
-    
-    averagePositiveGain25 = (rates_frame["delta"].tail(25)[rates_frame["delta"]>0].sum( ))/25
-    averageNegativeLoss25 = ((-1)*rates_frame["delta"].tail(25)[rates_frame["delta"]<0].sum( ))/25
-    RS25  = averagePositiveGain25/averageNegativeLoss25
-    RSI25 = 100 - (100/(1+RS25))
-    
-    averagePositiveGain20 = (rates_frame["delta"].tail(20)[rates_frame["delta"]>0].sum( ))/20
-    averageNegativeLoss20 = ((-1)*rates_frame["delta"].tail(20)[rates_frame["delta"]<0].sum( ))/20
-    RS20  = averagePositiveGain20/averageNegativeLoss20
-    RSI20 = 100 - (100/(1+RS20))
-    
-    if(RSI50<RSI45 and RSI45<RSI40 and RSI40<RSI35 and RSI35<RSI30 and RSI30<RSI25 and RSI25<RSI20):
+    if(rsi50<rsi45 and rsi45<rsi40 and rsi40<rsi35 and rsi35<rsi30 and rsi30<rsi25 and rsi25<rsi20):
         RSIRainbowSignals.append("BUY")
-        RSIRainbowSignals.append(strTimeframe)
+        RSIRainbowSignalsTF.append(strTimeframe)
         
-    if(RSI50>RSI45 and RSI45>RSI40 and RSI40>RSI35 and RSI35>RSI30 and RSI30>RSI25 and RSI25>RSI20):
+    if(rsi50>rsi45 and rsi45>rsi40 and rsi40>rsi35 and rsi35>rsi30 and rsi30>rsi25 and rsi25>rsi20):
         RSIRainbowSignals.append("SELL")
-        RSIRainbowSignals.append(strTimeframe)
+        RSIRainbowSignalsTF.append(strTimeframe)
+        
+    
+        
 
 
 # In[ ]:
