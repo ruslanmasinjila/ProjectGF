@@ -77,6 +77,10 @@ RSIRainbowSignals   = []
 RSIRainbowSignalsTF = []
 ##########################################################################################
 
+# For testing
+mt5Timeframe   = [M1,M2,M3,M4,M5]
+strTimeframe   = ["M1","M2","M3","M4","M5"]
+
 
 # In[ ]:
 
@@ -93,10 +97,12 @@ def getSignals(rates_frame,strTimeframe):
     if(rsi50<rsi45 and rsi45<rsi40 and rsi40<rsi35 and rsi35<rsi30 and rsi30<rsi25 and rsi25<rsi20):
         RSIRainbowSignals.append("BUY")
         RSIRainbowSignalsTF.append(strTimeframe)
+        return
         
     if(rsi50>rsi45 and rsi45>rsi40 and rsi40>rsi35 and rsi35>rsi30 and rsi30>rsi25 and rsi25>rsi20):
         RSIRainbowSignals.append("SELL")
         RSIRainbowSignalsTF.append(strTimeframe)
+        return
         
     
         
@@ -127,8 +133,8 @@ while(True):
     display = banner
     for cp in currency_pairs:
         display+="["+cp+"]"+"\n"
-        RainbowSignals =[]
-        RainbowSignalsTF =[]
+        RSIRainbowSignals =[]
+        RSIRainbowSignalsTF =[]
         for t in range(len(mt5Timeframe)):
             rates_frame = getRates(cp, mt5Timeframe[t], numCandles)
             getSignals(rates_frame,strTimeframe[t])
@@ -137,7 +143,7 @@ while(True):
                 display+=" ".join(RSIRainbowSignals)+"\n"
                 display+=" ".join(RSIRainbowSignalsTF)+"\n"
                 winsound.Beep(freq, duration)
-                    
+
         display+="==============================\n"
     print(display)
     time.sleep(60)
