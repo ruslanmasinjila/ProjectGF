@@ -66,7 +66,10 @@ with open('instruments.txt') as f:
 mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
 strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
 
-numCandles     = 51
+mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15]
+strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15"]
+
+numCandles     = 52
 offset         = 1
 
 RSIRainbowSignals   = []
@@ -78,24 +81,19 @@ RSIRainbowSignalsTF = []
 
 
 def getSignals(rates_frame,strTimeframe):
-    rsi50 = ta.rsi(rates_frame["close"],length=50).tail(1).item()
-    rsi45 = ta.rsi(rates_frame["close"],length=45).tail(1).item()
-    rsi40 = ta.rsi(rates_frame["close"],length=40).tail(1).item()
-    rsi35 = ta.rsi(rates_frame["close"],length=35).tail(1).item()
-    rsi30 = ta.rsi(rates_frame["close"],length=30).tail(1).item()
-    rsi25 = ta.rsi(rates_frame["close"],length=25).tail(1).item()
-    rsi20 = ta.rsi(rates_frame["close"],length=20).tail(1).item()
-    
-    if(rsi50<rsi45 and rsi45<rsi40 and rsi40<rsi35 and rsi35<rsi30 and rsi30<rsi25 and rsi25<rsi20):
+
+    ema50 = ta.ema(rates_frame["close"],length=50)
+
+    if(ema50.iloc[-1]>ema50.iloc[-2] and ema50.iloc[-2]>ema50.iloc[-3]):
         RSIRainbowSignals.append("BUY")
         RSIRainbowSignalsTF.append(strTimeframe)
         return
-        
-    if(rsi50>rsi45 and rsi45>rsi40 and rsi40>rsi35 and rsi35>rsi30 and rsi30>rsi25 and rsi25>rsi20):
+    
+    if(ema50.iloc[-1]<ema50.iloc[-2] and ema50.iloc[-2]<ema50.iloc[-3]):
         RSIRainbowSignals.append("SELL")
         RSIRainbowSignalsTF.append(strTimeframe)
         return
-        
+    
     
         
 
