@@ -63,11 +63,8 @@ with open('instruments.txt') as f:
 
 
 # TIMEFRAMES
-#mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
-#strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
-
-mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15]
-strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15"]
+mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
+strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
 
 numCandles     = 51
 offset         = 1
@@ -75,10 +72,6 @@ offset         = 1
 RSIRainbowSignals   = []
 RSIRainbowSignalsTF = []
 ##########################################################################################
-
-# For testing
-#mt5Timeframe   = [M1,M2,M3,M4,M5]
-#strTimeframe   = ["M1","M2","M3","M4","M5"]
 
 
 # In[ ]:
@@ -139,8 +132,8 @@ while(True):
             getSignals(rates_frame,strTimeframe[t])
         if(all(x == RSIRainbowSignals[0] for x in RSIRainbowSignals)):
             if(len(RSIRainbowSignals)==len(mt5Timeframe)):
-                display+=RSIRainbowSignals[0]+" *************** "+"\n"
-                display+=RSIRainbowSignalsTF[0]+" > "+RSIRainbowSignalsTF[-1]+"\n"
+                display+=" ".join(RSIRainbowSignals)+"\n"
+                display+=" ".join(RSIRainbowSignalsTF)+"\n"
                 winsound.Beep(freq, duration)
 
         display+="==============================\n"
