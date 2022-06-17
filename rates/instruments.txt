@@ -1,0 +1,17 @@
+EURUSD.r.csv
+GBPUSD.r.csv
+AUDUSD.r.csv
+NZDUSD.r.csv
+USDJPY.r.csv
+USDCHF.r.csv
+USDCAD.r.csv
+XAUUSD.r.csv
+WTI.csv
+US30.csv
+US500.csv
+EURO50.csv
+FRA40.csv
+HK50.csv
+JP225.csv
+AUS200.csv
+UK100.csv
