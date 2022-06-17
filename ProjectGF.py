@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[13]:
 
 
 ##########################################################################################
@@ -15,10 +15,6 @@ import numpy as np
 import time
 import os
 
-import winsound
-duration = 100
-freq     = 1000
-
 # NUMBER OF COLUMNS TO BE DISPLAYED
 pd.set_option('display.max_columns', 500)
 
@@ -31,7 +27,7 @@ if not mt5.initialize():
     quit()
 
 
-# In[ ]:
+# In[14]:
 
 
 # MT5 TIMEFRAME
@@ -63,79 +59,39 @@ with open('instruments.txt') as f:
 
 
 # TIMEFRAMES
-mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
-strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
+# mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
+# strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
 
-mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15]
-strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15"]
+mt5Timeframe   =   M5
+strTimeframe   =  "M5"
 
-numCandles     = 52
+numCandles     = 10000
 offset         = 1
-
-RSIRainbowSignals   = []
-RSIRainbowSignalsTF = []
 ##########################################################################################
 
 
-# In[ ]:
-
-
-def getSignals(rates_frame,strTimeframe):
-
-    ema50 = ta.ema(rates_frame["close"],length=50)
-
-    if(ema50.iloc[-1]>ema50.iloc[-2] and ema50.iloc[-2]>ema50.iloc[-3]):
-        RSIRainbowSignals.append("BUY")
-        RSIRainbowSignalsTF.append(strTimeframe)
-        return
-    
-    if(ema50.iloc[-1]<ema50.iloc[-2] and ema50.iloc[-2]<ema50.iloc[-3]):
-        RSIRainbowSignals.append("SELL")
-        RSIRainbowSignalsTF.append(strTimeframe)
-        return
-    
-    
-        
-
-
-# In[ ]:
+# In[15]:
 
 
 # Gets the most recent <numCandles> prices for a specified <currency_pair> and <mt5Timeframe>
 # Excludes the bar that has not finished forming <i.e offset = 1>
+# Saves the rates in .csv files
 def getRates(currency_pair, mt5Timeframe, numCandles):
     rates_frame =  mt5.copy_rates_from_pos(currency_pair, mt5Timeframe, offset, numCandles)
     rates_frame = pd.DataFrame(rates_frame)
-    return rates_frame
+    rates_frame['time']=pd.to_datetime(rates_frame['time'], unit='s')
+    rates_frame["rsi"] = ta.rsi(rates_frame["close"],length=100)
+    rates_frame=rates_frame.dropna().reset_index(drop=True)
+    rates_frame.drop(["open","high","low","close","tick_volume","spread","real_volume"],axis = 1, inplace=True)
+    rates_frame.rename(columns={"time": "ds", "rsi": "y"},inplace=True)
+    rates_frame.to_csv("rates/"+cp+".csv")
 
 ##########################################################################################
 
 
-# In[ ]:
+# In[16]:
 
 
-banner = ""
-banner+="##############################\n"
-banner+="           SIGNALS            \n"
-banner+="##############################\n"
-while(True):
-    
-    display = banner
-    for cp in currency_pairs:
-        display+="["+cp+"]"+"\n"
-        RSIRainbowSignals =[]
-        RSIRainbowSignalsTF =[]
-        for t in range(len(mt5Timeframe)):
-            rates_frame = getRates(cp, mt5Timeframe[t], numCandles)
-            getSignals(rates_frame,strTimeframe[t])
-        if(all(x == RSIRainbowSignals[0] for x in RSIRainbowSignals)):
-            if(len(RSIRainbowSignals)==len(mt5Timeframe)):
-                display+=" ".join(RSIRainbowSignals)+"\n"
-                display+=" ".join(RSIRainbowSignalsTF)+"\n"
-                winsound.Beep(freq, duration)
-
-        display+="==============================\n"
-    print(display)
-    time.sleep(60)
-    os.system('cls' if os.name == 'nt' else 'clear')
+for cp in currency_pairs:
+    getRates(cp, mt5Timeframe, numCandles)
 
