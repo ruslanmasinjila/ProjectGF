@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[13]:
+# In[29]:
 
 
 ##########################################################################################
@@ -27,7 +27,7 @@ if not mt5.initialize():
     quit()
 
 
-# In[14]:
+# In[30]:
 
 
 # MT5 TIMEFRAME
@@ -66,21 +66,24 @@ mt5Timeframe   =   M5
 strTimeframe   =  "M5"
 
 numCandles     = 10000
+window =1000
 offset         = 1
 ##########################################################################################
 
 
-# In[15]:
+# In[31]:
 
 
 # Gets the most recent <numCandles> prices for a specified <currency_pair> and <mt5Timeframe>
 # Excludes the bar that has not finished forming <i.e offset = 1>
 # Saves the rates in .csv files
+window = 1000
 def getRates(currency_pair, mt5Timeframe, numCandles):
     rates_frame =  mt5.copy_rates_from_pos(currency_pair, mt5Timeframe, offset, numCandles)
     rates_frame = pd.DataFrame(rates_frame)
     rates_frame['time']=pd.to_datetime(rates_frame['time'], unit='s')
-    rates_frame["rsi"] = ta.rsi(rates_frame["close"],length=100)
+    rates_frame["rsi"] = ta.rsi(rates_frame["close"],length=window)
+    rates_frame["rsi"] = rates_frame["rsi"].diff()
     rates_frame=rates_frame.dropna().reset_index(drop=True)
     rates_frame.drop(["open","high","low","close","tick_volume","spread","real_volume"],axis = 1, inplace=True)
     rates_frame.rename(columns={"time": "ds", "rsi": "y"},inplace=True)
@@ -89,7 +92,7 @@ def getRates(currency_pair, mt5Timeframe, numCandles):
 ##########################################################################################
 
 
-# In[16]:
+# In[32]:
 
 
 for cp in currency_pairs:
