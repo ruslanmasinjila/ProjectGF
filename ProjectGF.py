@@ -71,9 +71,9 @@ offset         = 1
 
 EMARainbowSignals   = []
 
-mt5Timeframe   = [M1]
-strTimeframe   = ["M1"]
-currency_pairs = ["EURUSD"]
+#mt5Timeframe   = [M1]
+#strTimeframe   = ["M1"]
+#currency_pairs = ["EURUSD"]
 ##########################################################################################
 
 
@@ -82,6 +82,11 @@ currency_pairs = ["EURUSD"]
 
 def getSignals(rates_frame,strTimeframe):
     
+    Time, Open, Close, High, Low, Volume = getTOCHLV(rates_frame.tail(3))
+
+    lastCandle = -1
+    previousCandle = -2
+
     rates_frame["median"] = (rates_frame["high"]+rates_frame["low"])/2
     ema50 = ta.ema(rates_frame["median"],length=50).tail(1).item()
     ema45 = ta.ema(rates_frame["median"],length=45).tail(1).item()
@@ -91,25 +96,42 @@ def getSignals(rates_frame,strTimeframe):
     ema25 = ta.ema(rates_frame["median"],length=25).tail(1).item()
     ema20 = ta.ema(rates_frame["median"],length=20).tail(1).item()
     
+    if(ema50<ema45 and ema45<ema40 and ema40<ema35 and ema35<ema30 and ema30<ema25 and ema25<ema20):
+        
+        # Check if the lastCandle is Green
+        if(Close[lastCandle]>Open[lastCandle]):
+            
+            # Check if the lastCandle Crosses the Rainbow
+            if(Low[lastCandle]<ema50 and High[lastCandle]>ema20):
+            
+                # Calculate BW MFI
+                lastCandleMFI =  (High[lastCandle]-Low[lastCandle])/Volume[lastCandle]
+                previousCandleMFI =  (High[previousCandle]-Low[previousCandle])/Volume[previousCandle]
+            
+                if(Volume[lastCandle]>Volume[previousCandle] and lastCandleMFI>previousCandleMFI):
 
-    '''
-    rsi50 = ta.rsi(rates_frame["close"],length=50).tail(1).item()
-    rsi45 = ta.rsi(rates_frame["close"],length=45).tail(1).item()
-    rsi40 = ta.rsi(rates_frame["close"],length=40).tail(1).item()
-    rsi35 = ta.rsi(rates_frame["close"],length=35).tail(1).item()
-    rsi30 = ta.rsi(rates_frame["close"],length=30).tail(1).item()
-    rsi25 = ta.rsi(rates_frame["close"],length=25).tail(1).item()
-    rsi20 = ta.rsi(rates_frame["close"],length=20).tail(1).item()
-    
-    if(rsi50<rsi45 and rsi45<rsi40 and rsi40<rsi35 and rsi35<rsi30 and rsi30<rsi25 and rsi25<rsi20):
-        EMARainbowSignals.append("BUY "+strTimeframe+" |")
-        return
+                    EMARainbowSignals.append("BUY "+strTimeframe+" |")
+                    return
+                
+                
+    if(ema50>ema45 and ema45>ema40 and ema40>ema35 and ema35>ema30 and ema30>ema25 and ema25>ema20):
         
-    if(rsi50>rsi45 and rsi45>rsi40 and rsi40>rsi35 and rsi35>rsi30 and rsi30>rsi25 and rsi25>rsi20):
-        EMARainbowSignals.append("SELL "+strTimeframe+" |")
-        return
-    '''
-        
+        # Check if the lastCandle is Red
+        if(Close[lastCandle]<Open[lastCandle]):
+            
+            # Check if the lastCandle Crosses the Rainbow
+            if(High[lastCandle]>ema50 and Low[lastCandle]<ema20):
+                
+                
+                # Calculate BW MFI
+                lastCandleMFI =  (High[lastCandle]-Low[lastCandle])/Volume[lastCandle]
+                previousCandleMFI =  (High[previousCandle]-Low[previousCandle])/Volume[previousCandle]
+            
+                if(Volume[lastCandle]>Volume[previousCandle] and lastCandleMFI>previousCandleMFI):
+            
+            
+                    EMARainbowSignals.append("SELL "+strTimeframe+" |")
+                    return
 
 
 # In[34]:
@@ -125,6 +147,19 @@ def getRates(currency_pair, mt5Timeframe, numCandles):
 ##########################################################################################
 
 
+# In[ ]:
+
+
+# Decomposes the DataFrame into individual lists for Time, Close, High and Low
+def getTOCHLV(rates_frame):
+    return  (list(rates_frame["time"]), 
+            list(rates_frame["open"]), 
+            list(rates_frame["close"]),
+            list(rates_frame["high"]),
+            list(rates_frame["low"]),
+            list(rates_frame["tick_volume"]))
+
+
 # In[35]:
 
 
@@ -132,8 +167,7 @@ banner = ""
 banner+="##############################\n"
 banner+="           SIGNALS            \n"
 banner+="##############################\n"
-lst = [1]
-for i in lst:
+while(True):
     
     display = banner
     for cp in currency_pairs:
