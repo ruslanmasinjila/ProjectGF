@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[31]:
+# In[ ]:
 
 
 ##########################################################################################
@@ -31,7 +31,7 @@ if not mt5.initialize():
     quit()
 
 
-# In[32]:
+# In[ ]:
 
 
 # MT5 TIMEFRAME
@@ -70,22 +70,22 @@ numCandles     = 1000
 offset         = 1
 
 EMARainbowSignals   = []
-
-#mt5Timeframe   = [M1]
-#strTimeframe   = ["M1"]
-#currency_pairs = ["EURUSD"]
 ##########################################################################################
 
 
-# In[33]:
+# In[ ]:
 
 
 def getSignals(rates_frame,strTimeframe):
     
     Time, Open, Close, High, Low, Volume = getTOCHLV(rates_frame.tail(3))
 
-    lastCandle = -1
-    previousCandle = -2
+    lastCandle      = -1
+    previousCandle  = -2
+    
+    rightCandle     = -1
+    middleCandle    = -2
+    leftCandle      = -3
 
     rates_frame["median"] = (rates_frame["high"]+rates_frame["low"])/2
     ema50 = ta.ema(rates_frame["median"],length=50).tail(1).item()
@@ -98,43 +98,48 @@ def getSignals(rates_frame,strTimeframe):
     
     if(ema50<ema45 and ema45<ema40 and ema40<ema35 and ema35<ema30 and ema30<ema25 and ema25<ema20):
         
-        # Check if the lastCandle is Green
-        if(Close[lastCandle]>Open[lastCandle]):
+        # Check if the middleCandle is Green
+        if(Close[middleCandle]>Open[middleCandle]):
             
-            # Check if the lastCandle Crosses the Rainbow
-            if(Low[lastCandle]<ema50 and High[lastCandle]>ema20):
+            # Check if the middleCandle Crosses the Rainbow from Below
+            if(Open[middleCandle]<ema50 and Close[middleCandle]>ema20):
             
-                # Calculate BW MFI
-                lastCandleMFI =  (High[lastCandle]-Low[lastCandle])/Volume[lastCandle]
-                previousCandleMFI =  (High[previousCandle]-Low[previousCandle])/Volume[previousCandle]
+                # Calculate BW MFI for the middleCandle and leftCandle
+                middleCandleMFI   =  (High[middleCandle]-Low[middleCandle])/Volume[middleCandle]
+                leftCandleMFI     =  (High[leftCandle]  -Low[leftCandle])/Volume[leftCandle]
             
-                if(Volume[lastCandle]>Volume[previousCandle] and lastCandleMFI>previousCandleMFI):
+                if(Volume[middleCandle]>Volume[leftCandle] and middleCandleMFI>leftCandleMFI):
+                    
+                    # Check if the rightCandle is Green
+                    if(Close[rightCandle]>Open[rightCandle]):
 
-                    EMARainbowSignals.append("BUY "+strTimeframe+" |")
-                    return
-                
+                        EMARainbowSignals.append("BUY "+strTimeframe+" |")
+                        return
+
                 
     if(ema50>ema45 and ema45>ema40 and ema40>ema35 and ema35>ema30 and ema30>ema25 and ema25>ema20):
         
-        # Check if the lastCandle is Red
-        if(Close[lastCandle]<Open[lastCandle]):
+        # Check if the middleCandle is Red
+        if(Close[middleCandle]<Open[middleCandle]):
             
-            # Check if the lastCandle Crosses the Rainbow
-            if(High[lastCandle]>ema50 and Low[lastCandle]<ema20):
+            # Check if the middleCandle Crosses the Rainbow from Above
+            if(Open[middleCandle]>ema50 and Close[middleCandle]<ema20):
                 
                 
-                # Calculate BW MFI
-                lastCandleMFI =  (High[lastCandle]-Low[lastCandle])/Volume[lastCandle]
-                previousCandleMFI =  (High[previousCandle]-Low[previousCandle])/Volume[previousCandle]
+                # Calculate BW MFI for the middleCandle and leftCandle
+                middleCandleMFI   =  (High[middleCandle]-Low[middleCandle])/Volume[middleCandle]
+                leftCandleMFI     =  (High[leftCandle]  -Low[leftCandle])/Volume[leftCandle]
             
-                if(Volume[lastCandle]>Volume[previousCandle] and lastCandleMFI>previousCandleMFI):
-            
-            
-                    EMARainbowSignals.append("SELL "+strTimeframe+" |")
-                    return
+                if(Volume[middleCandle]>Volume[leftCandle] and middleCandleMFI>leftCandleMFI):
+                    
+                    # Check if the rightCandle is Red
+                    if(Close[rightCandle]<Open[rightCandle]):
+                    
+                        EMARainbowSignals.append("SELL "+strTimeframe+" |")
+                        return
 
 
-# In[34]:
+# In[ ]:
 
 
 # Gets the most recent <numCandles> prices for a specified <currency_pair> and <mt5Timeframe>
@@ -160,7 +165,7 @@ def getTOCHLV(rates_frame):
             list(rates_frame["tick_volume"]))
 
 
-# In[35]:
+# In[ ]:
 
 
 banner = ""
@@ -177,6 +182,7 @@ while(True):
             rates_frame = getRates(cp, mt5Timeframe[t], numCandles)
             getSignals(rates_frame,strTimeframe[t])
         if(len(EMARainbowSignals)>0):
+            display+="******************************"+"\n"
             display+=" ".join(EMARainbowSignals)+"\n"
             winsound.Beep(freq, duration)
 
