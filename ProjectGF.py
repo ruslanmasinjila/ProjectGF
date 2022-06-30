@@ -94,14 +94,14 @@ def getSignals(rates_frame,strTimeframe):
     ema20 = ta.ema(rates_frame["median"],length=20).tail(1).item()
     
     if(sma50<ema50 and ema50<ema45 and ema45<ema40 and ema40<ema35 and ema35<ema30 and ema30<ema25 and ema25<ema20):
-        if(Low[previousCandle]<sma50 and Close[previousCandle]>ema20):
+        if(Open[previousCandle]<sma50 and Close[previousCandle]>ema20):
             if(Close[lastCandle]>Open[lastCandle]):
                 EMARainbowSignals.append("BUY "+strTimeframe+" |")
                 return
 
                 
     if(sma50>ema50 and ema50>ema45 and ema45>ema40 and ema40>ema35 and ema35>ema30 and ema30>ema25 and ema25>ema20):
-        if(High[previousCandle]>sma50 and Close[previousCandle]<ema20):
+        if(Open[previousCandle]>sma50 and Close[previousCandle]<ema20):
             if(Close[lastCandle]<Open[lastCandle]):
                 EMARainbowSignals.append("SELL "+strTimeframe+" |")
                 return
