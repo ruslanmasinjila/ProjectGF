@@ -63,14 +63,18 @@ with open('instruments.txt') as f:
 
 
 # TIMEFRAMES
-mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
-strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
+mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1,W1,MN1]
+strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1","W1","MN1"]
 
 numCandles     = 1000
 offset         = 1
 
 EMARainbowSignals   = []
+EMARainbowSignalsTF = []
 ##########################################################################################
+
+mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15]
+strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15"]
 
 
 # In[ ]:
@@ -122,7 +126,8 @@ def getSignals(rates_frame,strTimeframe):
            ema30_velocity>0 and 
            ema25_velocity>0 and 
            ema20_velocity>0):
-            EMARainbowSignals.append("BUY "+strTimeframe+" |")
+            EMARainbowSignals.append("BUY")
+            EMARainbowSignalsTF.append(strTimeframe)
             return
         
     if(ema50>ema45 and ema45>ema40 and ema40>ema35 and ema35>ema30 and ema30>ema25 and ema25>ema20):
@@ -133,7 +138,8 @@ def getSignals(rates_frame,strTimeframe):
            ema30_velocity<0 and 
            ema25_velocity<0 and 
            ema20_velocity<0):
-            EMARainbowSignals.append("SELL "+strTimeframe+" |")
+            EMARainbowSignals.append("SELL")
+            EMARainbowSignalsTF.append(strTimeframe)
             return
 
 
@@ -163,14 +169,16 @@ while(True):
     for cp in currency_pairs:
         display+="["+cp+"]"+"\n"
         EMARainbowSignals =[]
+        EMARainbowSignalsTF =[]
         for t in range(len(mt5Timeframe)):
             rates_frame = getRates(cp, mt5Timeframe[t], numCandles)
             getSignals(rates_frame,strTimeframe[t])
-        if(len(EMARainbowSignals)>0):
-            display+="******************************"+"\n"
-            display+=" ".join(EMARainbowSignals)+"\n"
-            winsound.Beep(freq, duration)
-
+        if(all(x == EMARainbowSignals[0] for x in EMARainbowSignals)):
+            if(len(EMARainbowSignals)==len(mt5Timeframe)):
+                display+=" ".join(EMARainbowSignals)+"\n"
+                display+=" ".join(EMARainbowSignalsTF)+"\n"
+                winsound.Beep(freq, duration)
+                    
         display+="==============================\n"
     print(display)
     time.sleep(60)
