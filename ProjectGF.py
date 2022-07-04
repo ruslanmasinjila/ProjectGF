@@ -63,18 +63,14 @@ with open('instruments.txt') as f:
 
 
 # TIMEFRAMES
-mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1,W1,MN1]
-strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1","W1","MN1"]
+mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
+strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
 
 numCandles     = 1000
 offset         = 1
 
 EMARainbowSignals   = []
-EMARainbowSignalsTF = []
 ##########################################################################################
-
-mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15]
-strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15"]
 
 
 # In[ ]:
@@ -82,65 +78,33 @@ strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15"]
 
 def getSignals(rates_frame,strTimeframe):
     
+    Time, Open, Close, High, Low, Volume = getTOCHLV(rates_frame.tail(3))
+
+    lastCandle      = -1
+    previousCandle  = -2
+
     rates_frame["median"] = (rates_frame["high"]+rates_frame["low"])/2
+    sma50 = rates_frame["median"].rolling(50).mean().tail(1).item()
+    ema50 = ta.ema(rates_frame["median"],length=50).tail(1).item()
+    ema45 = ta.ema(rates_frame["median"],length=45).tail(1).item()
+    ema40 = ta.ema(rates_frame["median"],length=40).tail(1).item()
+    ema35 = ta.ema(rates_frame["median"],length=35).tail(1).item()
+    ema30 = ta.ema(rates_frame["median"],length=30).tail(1).item()
+    ema25 = ta.ema(rates_frame["median"],length=25).tail(1).item()
+    ema20 = ta.ema(rates_frame["median"],length=20).tail(1).item()
     
-    rates_frame["ema50"]  = ta.ema(rates_frame["median"],length=50)
-    rates_frame["ema45"]  = ta.ema(rates_frame["median"],length=45)
-    rates_frame["ema40"]  = ta.ema(rates_frame["median"],length=40)
-    rates_frame["ema35"]  = ta.ema(rates_frame["median"],length=35)
-    rates_frame["ema30"]  = ta.ema(rates_frame["median"],length=30)
-    rates_frame["ema25"]  = ta.ema(rates_frame["median"],length=25)
-    rates_frame["ema20"]  = ta.ema(rates_frame["median"],length=20)
-    
-    rates_frame["ema50_velocity"] = rates_frame["ema50"].diff()
-    rates_frame["ema45_velocity"] = rates_frame["ema45"].diff()
-    rates_frame["ema40_velocity"] = rates_frame["ema40"].diff()
-    rates_frame["ema35_velocity"] = rates_frame["ema35"].diff()
-    rates_frame["ema30_velocity"] = rates_frame["ema30"].diff()
-    rates_frame["ema25_velocity"] = rates_frame["ema25"].diff()
-    rates_frame["ema20_velocity"] = rates_frame["ema20"].diff()
-    
-    
-    ema50 = rates_frame["ema50"].tail(1).item()
-    ema45 = rates_frame["ema45"].tail(1).item()
-    ema40 = rates_frame["ema40"].tail(1).item()
-    ema35 = rates_frame["ema35"].tail(1).item()
-    ema30 = rates_frame["ema30"].tail(1).item()
-    ema25 = rates_frame["ema25"].tail(1).item()
-    ema20 = rates_frame["ema20"].tail(1).item()
-    
-    ema50_velocity = rates_frame["ema50_velocity"].tail(1).item()
-    ema45_velocity = rates_frame["ema45_velocity"].tail(1).item()
-    ema40_velocity = rates_frame["ema40_velocity"].tail(1).item()
-    ema35_velocity = rates_frame["ema35_velocity"].tail(1).item()
-    ema30_velocity = rates_frame["ema30_velocity"].tail(1).item()
-    ema25_velocity = rates_frame["ema25_velocity"].tail(1).item()
-    ema20_velocity = rates_frame["ema20_velocity"].tail(1).item()
-    
-    
-    if(ema50<ema45 and ema45<ema40 and ema40<ema35 and ema35<ema30 and ema30<ema25 and ema25<ema20):
-        if(ema50_velocity>0 and 
-           ema45_velocity>0 and 
-           ema40_velocity>0 and 
-           ema35_velocity>0 and 
-           ema30_velocity>0 and 
-           ema25_velocity>0 and 
-           ema20_velocity>0):
-            EMARainbowSignals.append("BUY")
-            EMARainbowSignalsTF.append(strTimeframe)
-            return
-        
-    if(ema50>ema45 and ema45>ema40 and ema40>ema35 and ema35>ema30 and ema30>ema25 and ema25>ema20):
-        if(ema50_velocity<0 and 
-           ema45_velocity<0 and 
-           ema40_velocity<0 and 
-           ema35_velocity<0 and 
-           ema30_velocity<0 and 
-           ema25_velocity<0 and 
-           ema20_velocity<0):
-            EMARainbowSignals.append("SELL")
-            EMARainbowSignalsTF.append(strTimeframe)
-            return
+    if(sma50<ema50 and ema50<ema45 and ema45<ema40 and ema40<ema35 and ema35<ema30 and ema30<ema25 and ema25<ema20):
+        if(Open[previousCandle]<sma50 and Close[previousCandle]>ema20):
+            if(Close[lastCandle]>Open[lastCandle]):
+                EMARainbowSignals.append("BUY "+strTimeframe+" |")
+                return
+
+                
+    if(sma50>ema50 and ema50>ema45 and ema45>ema40 and ema40>ema35 and ema35>ema30 and ema30>ema25 and ema25>ema20):
+        if(Open[previousCandle]>sma50 and Close[previousCandle]<ema20):
+            if(Close[lastCandle]<Open[lastCandle]):
+                EMARainbowSignals.append("SELL "+strTimeframe+" |")
+                return
 
 
 # In[ ]:
@@ -159,6 +123,19 @@ def getRates(currency_pair, mt5Timeframe, numCandles):
 # In[ ]:
 
 
+# Decomposes the DataFrame into individual lists for Time, Close, High and Low
+def getTOCHLV(rates_frame):
+    return  (list(rates_frame["time"]), 
+            list(rates_frame["open"]), 
+            list(rates_frame["close"]),
+            list(rates_frame["high"]),
+            list(rates_frame["low"]),
+            list(rates_frame["tick_volume"]))
+
+
+# In[ ]:
+
+
 banner = ""
 banner+="##############################\n"
 banner+="           SIGNALS            \n"
@@ -169,16 +146,14 @@ while(True):
     for cp in currency_pairs:
         display+="["+cp+"]"+"\n"
         EMARainbowSignals =[]
-        EMARainbowSignalsTF =[]
         for t in range(len(mt5Timeframe)):
             rates_frame = getRates(cp, mt5Timeframe[t], numCandles)
             getSignals(rates_frame,strTimeframe[t])
-        if(all(x == EMARainbowSignals[0] for x in EMARainbowSignals)):
-            if(len(EMARainbowSignals)==len(mt5Timeframe)):
-                display+=" ".join(EMARainbowSignals)+"\n"
-                display+=" ".join(EMARainbowSignalsTF)+"\n"
-                winsound.Beep(freq, duration)
-                    
+        if(len(EMARainbowSignals)>0):
+            display+="******************************"+"\n"
+            display+=" ".join(EMARainbowSignals)+"\n"
+            winsound.Beep(freq, duration)
+
         display+="==============================\n"
     print(display)
     time.sleep(60)
