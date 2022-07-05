@@ -78,11 +78,6 @@ EMARainbowSignals   = []
 
 def getSignals(rates_frame,strTimeframe):
     
-    Time, Open, Close, High, Low, Volume = getTOCHLV(rates_frame.tail(3))
-
-    lastCandle      = -1
-    previousCandle  = -2
-
     rates_frame["median"] = (rates_frame["high"]+rates_frame["low"])/2
     sma50 = rates_frame["median"].rolling(50).mean().tail(1).item()
     ema50 = ta.ema(rates_frame["median"],length=50).tail(1).item()
@@ -93,18 +88,14 @@ def getSignals(rates_frame,strTimeframe):
     ema25 = ta.ema(rates_frame["median"],length=25).tail(1).item()
     ema20 = ta.ema(rates_frame["median"],length=20).tail(1).item()
     
-    if(sma50<ema50 and ema50<ema45 and ema45<ema40 and ema40<ema35 and ema35<ema30 and ema30<ema25 and ema25<ema20):
-        if(Open[previousCandle]<sma50 and Close[previousCandle]>ema20):
-            if(Close[lastCandle]>Open[lastCandle]):
-                EMARainbowSignals.append("BUY "+strTimeframe+" |")
-                return
+    if(ema50<ema45 and ema45<ema40 and ema40<ema35 and ema35<ema30 and ema30<ema25 and ema25<ema20 and ema20<sma50):
+        EMARainbowSignals.append("BUY "+strTimeframe+" |")
+        return
 
                 
-    if(sma50>ema50 and ema50>ema45 and ema45>ema40 and ema40>ema35 and ema35>ema30 and ema30>ema25 and ema25>ema20):
-        if(Open[previousCandle]>sma50 and Close[previousCandle]<ema20):
-            if(Close[lastCandle]<Open[lastCandle]):
-                EMARainbowSignals.append("SELL "+strTimeframe+" |")
-                return
+    if(ema50>ema45 and ema45>ema40 and ema40>ema35 and ema35>ema30 and ema30>ema25 and ema25>ema20 and ema20>sma50):
+        EMARainbowSignals.append("SELL "+strTimeframe+" |")
+        return
 
 
 # In[ ]:
@@ -118,19 +109,6 @@ def getRates(currency_pair, mt5Timeframe, numCandles):
     return rates_frame
 
 ##########################################################################################
-
-
-# In[ ]:
-
-
-# Decomposes the DataFrame into individual lists for Time, Close, High and Low
-def getTOCHLV(rates_frame):
-    return  (list(rates_frame["time"]), 
-            list(rates_frame["open"]), 
-            list(rates_frame["close"]),
-            list(rates_frame["high"]),
-            list(rates_frame["low"]),
-            list(rates_frame["tick_volume"]))
 
 
 # In[ ]:
