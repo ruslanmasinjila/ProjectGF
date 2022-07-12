@@ -70,10 +70,6 @@ numCandles     = 1000
 offset         = 1
 
 EMARainbowSignals   = []
-
-mt5Timeframe   = [M1]
-strTimeframe   = ["M1"]
-currency_pairs = ["EURUSD"]
 ##########################################################################################
 
 
@@ -126,27 +122,27 @@ def getSignals(rates_frame,strTimeframe):
            currentEMA35<currentEMA30 and
            currentEMA30<currentEMA25 and
            currentEMA25<currentEMA20):
-            pass
-    
-    
-    '''
-    if(previousOpen<previousMean and previousOpen>previousLowerBoundary):
-        if(previousClose>previousUpperBoundary):
-            if(currentClose>currentOpen):
-                EMARainbowSignals.append("[BUY NOW | " +strTimeframe+"]")
-            else:
-                EMARainbowSignals.append("[BUY WATCH | " +strTimeframe+"]")
-                
-    if(previousOpen>previousMean and previousOpen<previousUpperBoundary):
-        if(previousClose<previousLowerBoundary):
-            if(currentClose<currentOpen):
-                EMARainbowSignals.append("[SELL NOW | " +strTimeframe+"]")
-            else:
-                EMARainbowSignals.append("[SELL WATCH | " +strTimeframe+"]")
-    '''
-    
-    rates_frame
-                
+            if(previousOpen<previousEMA50 and previousClose>previousEMA50 and previousClose<previousEMA20):
+                if(currentOpen>currentEMA50 and currentOpen<currentEMA20 and currentClose>currentEMA20):
+                    EMARainbowSignals.append("[BUY | " +strTimeframe+"]")
+                    
+    if(previousEMA50>previousEMA45 and
+       previousEMA45>previousEMA40 and
+       previousEMA40>previousEMA35 and
+       previousEMA35>previousEMA30 and
+       previousEMA30>previousEMA25 and
+       previousEMA25>previousEMA20):
+        if(currentEMA50>currentEMA45 and
+           currentEMA45>currentEMA40 and
+           currentEMA40>currentEMA35 and
+           currentEMA35>currentEMA30 and
+           currentEMA30>currentEMA25 and
+           currentEMA25>currentEMA20):
+            if(previousOpen>previousEMA50 and previousClose<previousEMA50 and previousClose>previousEMA20):
+                if(currentOpen<currentEMA50 and currentOpen>currentEMA20 and currentClose<currentEMA20):
+                    EMARainbowSignals.append("[SELL | " +strTimeframe+"]")
+
+##########################################################################################
 
 
 # In[4]:
