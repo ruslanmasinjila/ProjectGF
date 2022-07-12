@@ -88,58 +88,58 @@ def getSignals(rates_frame,strTimeframe):
     rates_frame["ema20"] = ta.ema(rates_frame["median"],length=20)
     
     
-    previousOpen          = rates_frame.iloc[-2].open
-    previousClose         = rates_frame.iloc[-2].close
-    previousEMA50         = rates_frame.iloc[-2].ema50
-    previousEMA45         = rates_frame.iloc[-2].ema45
-    previousEMA40         = rates_frame.iloc[-2].ema40
-    previousEMA35         = rates_frame.iloc[-2].ema35
-    previousEMA30         = rates_frame.iloc[-2].ema30
-    previousEMA25         = rates_frame.iloc[-2].ema25
-    previousEMA20         = rates_frame.iloc[-2].ema20
+    leftOpen          = rates_frame.iloc[-3].open
+    leftClose         = rates_frame.iloc[-3].close
+    leftEMA50         = rates_frame.iloc[-3].ema50
+    leftEMA45         = rates_frame.iloc[-3].ema45
+    leftEMA40         = rates_frame.iloc[-3].ema40
+    leftEMA35         = rates_frame.iloc[-3].ema35
+    leftEMA30         = rates_frame.iloc[-3].ema30
+    leftEMA25         = rates_frame.iloc[-3].ema25
+    leftEMA20         = rates_frame.iloc[-3].ema20
     
     
-    currentOpen          = rates_frame.iloc[-1].open
-    currentClose         = rates_frame.iloc[-1].close
-    currentEMA50         = rates_frame.iloc[-1].ema50
-    currentEMA45         = rates_frame.iloc[-1].ema45
-    currentEMA40         = rates_frame.iloc[-1].ema40
-    currentEMA35         = rates_frame.iloc[-1].ema35
-    currentEMA30         = rates_frame.iloc[-1].ema30
-    currentEMA25         = rates_frame.iloc[-1].ema25
-    currentEMA20         = rates_frame.iloc[-1].ema20
+    middleOpen          = rates_frame.iloc[-2].open
+    middleClose         = rates_frame.iloc[-2].close
+    middleEMA50         = rates_frame.iloc[-2].ema50
+    middleEMA45         = rates_frame.iloc[-2].ema45
+    middleEMA40         = rates_frame.iloc[-2].ema40
+    middleEMA35         = rates_frame.iloc[-2].ema35
+    middleEMA30         = rates_frame.iloc[-2].ema30
+    middleEMA25         = rates_frame.iloc[-2].ema25
+    middleEMA20         = rates_frame.iloc[-2].ema20
     
     
-    if(previousEMA50<previousEMA45 and
-       previousEMA45<previousEMA40 and
-       previousEMA40<previousEMA35 and
-       previousEMA35<previousEMA30 and
-       previousEMA30<previousEMA25 and
-       previousEMA25<previousEMA20):
-        if(currentEMA50<currentEMA45 and
-           currentEMA45<currentEMA40 and
-           currentEMA40<currentEMA35 and
-           currentEMA35<currentEMA30 and
-           currentEMA30<currentEMA25 and
-           currentEMA25<currentEMA20):
-            if(previousOpen<previousEMA50 and previousClose>previousEMA50 and previousClose<previousEMA20):
-                if(currentOpen>currentEMA50 and currentOpen<currentEMA20 and currentClose>currentEMA20):
+    if(leftEMA50<leftEMA45 and
+       leftEMA45<leftEMA40 and
+       leftEMA40<leftEMA35 and
+       leftEMA35<leftEMA30 and
+       leftEMA30<leftEMA25 and
+       leftEMA25<leftEMA20):
+        if(middleEMA50<middleEMA45 and
+           middleEMA45<middleEMA40 and
+           middleEMA40<middleEMA35 and
+           middleEMA35<middleEMA30 and
+           middleEMA30<middleEMA25 and
+           middleEMA25<middleEMA20):
+            if(leftOpen<leftEMA50 and leftClose>leftEMA50 and leftClose<leftEMA20):
+                if(middleOpen>middleEMA50 and middleOpen<middleEMA20 and middleClose>middleEMA20):
                     EMARainbowSignals.append("[BUY | " +strTimeframe+"]")
                     
-    if(previousEMA50>previousEMA45 and
-       previousEMA45>previousEMA40 and
-       previousEMA40>previousEMA35 and
-       previousEMA35>previousEMA30 and
-       previousEMA30>previousEMA25 and
-       previousEMA25>previousEMA20):
-        if(currentEMA50>currentEMA45 and
-           currentEMA45>currentEMA40 and
-           currentEMA40>currentEMA35 and
-           currentEMA35>currentEMA30 and
-           currentEMA30>currentEMA25 and
-           currentEMA25>currentEMA20):
-            if(previousOpen>previousEMA50 and previousClose<previousEMA50 and previousClose>previousEMA20):
-                if(currentOpen<currentEMA50 and currentOpen>currentEMA20 and currentClose<currentEMA20):
+    if(leftEMA50>leftEMA45 and
+       leftEMA45>leftEMA40 and
+       leftEMA40>leftEMA35 and
+       leftEMA35>leftEMA30 and
+       leftEMA30>leftEMA25 and
+       leftEMA25>leftEMA20):
+        if(middleEMA50>middleEMA45 and
+           middleEMA45>middleEMA40 and
+           middleEMA40>middleEMA35 and
+           middleEMA35>middleEMA30 and
+           middleEMA30>middleEMA25 and
+           middleEMA25>middleEMA20):
+            if(leftOpen>leftEMA50 and leftClose<leftEMA50 and leftClose>leftEMA20):
+                if(middleOpen<middleEMA50 and middleOpen>middleEMA20 and middleClose<middleEMA20):
                     EMARainbowSignals.append("[SELL | " +strTimeframe+"]")
 
 ##########################################################################################
