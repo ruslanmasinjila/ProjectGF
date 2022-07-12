@@ -71,7 +71,6 @@ offset         = 1
 rollingPeriod  = 20
 
 BollingerSignals   = []
-BollingerSignalsTF = []
 ##########################################################################################
 
 
@@ -104,20 +103,16 @@ def getSignals(rates_frame,strTimeframe):
     if(previousOpen<previousMean and previousOpen>previousLowerBoundary):
         if(previousClose>previousUpperBoundary):
             if(currentClose>currentOpen):
-                BollingerSignals.append("BUY NOW")
-                BollingerSignalsTF.append("strTimeframe")
+                BollingerSignals.append("[BUY NOW | " +strTimeframe+"]")
             else:
-                BollingerSignals.append("BUY POSSIBILITY")
-                BollingerSignalsTF.append(strTimeframe)
+                BollingerSignals.append("[BUY WATCH | " +strTimeframe+"]")
                 
     if(previousOpen>previousMean and previousOpen<previousUpperBoundary):
         if(previousClose<previousLowerBoundary):
             if(currentClose<currentOpen):
-                BollingerSignals.append("SELL NOW")
-                BollingerSignalsTF.append("strTimeframe")
+                BollingerSignals.append("[SELL NOW | " +strTimeframe+"]")
             else:
-                BollingerSignals.append("SELL POSSIBILITY")
-                BollingerSignalsTF.append(strTimeframe)
+                BollingerSignals.append("[SELL WATCH | " +strTimeframe+"]")
                 
                 
     
@@ -149,13 +144,11 @@ while(True):
     for cp in currency_pairs:
         display+="["+cp+"]"+"\n"
         BollingerSignals =[]
-        BollingerSignalsTF =[]
         for t in range(len(mt5Timeframe)):
             rates_frame = getRates(cp, mt5Timeframe[t], numCandles)
             getSignals(rates_frame,strTimeframe[t])
         if(len(BollingerSignals)>0):
             display+=" ".join(BollingerSignals)+"\n"
-            display+=" ".join(BollingerSignalsTF)+"\n"
             winsound.Beep(freq, duration)
 
         display+="==============================\n"
