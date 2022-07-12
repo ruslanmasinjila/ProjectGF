@@ -109,6 +109,9 @@ def getSignals(rates_frame,strTimeframe):
     middleEMA25         = rates_frame.iloc[-2].ema25
     middleEMA20         = rates_frame.iloc[-2].ema20
     
+    rightOpen           = rates_frame.iloc[-1].open
+    rightClose          = rates_frame.iloc[-1].close
+    
     
     if(leftEMA50<leftEMA45 and
        leftEMA45<leftEMA40 and
@@ -124,7 +127,8 @@ def getSignals(rates_frame,strTimeframe):
            middleEMA25<middleEMA20):
             if(leftOpen<leftEMA50 and leftClose>leftEMA50 and leftClose<leftEMA20):
                 if(middleOpen>middleEMA50 and middleOpen<middleEMA20 and middleClose>middleEMA20):
-                    EMARainbowSignals.append("[BUY | " +strTimeframe+"]")
+                    if(rightClose>rightOpen):
+                        EMARainbowSignals.append("[BUY | " +strTimeframe+"]")
                     
     if(leftEMA50>leftEMA45 and
        leftEMA45>leftEMA40 and
@@ -140,7 +144,8 @@ def getSignals(rates_frame,strTimeframe):
            middleEMA25>middleEMA20):
             if(leftOpen>leftEMA50 and leftClose<leftEMA50 and leftClose>leftEMA20):
                 if(middleOpen<middleEMA50 and middleOpen>middleEMA20 and middleClose<middleEMA20):
-                    EMARainbowSignals.append("[SELL | " +strTimeframe+"]")
+                    if(rightClose<rightOpen):
+                        EMARainbowSignals.append("[SELL | " +strTimeframe+"]")
 
 ##########################################################################################
 
