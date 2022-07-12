@@ -66,10 +66,12 @@ with open('instruments.txt') as f:
 mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
 strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
 
-numCandles     = 1000
+numCandles     = 25
 offset         = 1
+rollingPeriod  = 20
 
-EMARainbowSignals   = []
+BollingerSignals   = []
+BollingerSignalsTF = []
 ##########################################################################################
 
 
@@ -78,24 +80,47 @@ EMARainbowSignals   = []
 
 def getSignals(rates_frame,strTimeframe):
     
-    rates_frame["median"] = (rates_frame["high"]+rates_frame["low"])/2
-    sma50 = rates_frame["median"].rolling(50).mean().tail(1).item()
-    ema50 = ta.ema(rates_frame["median"],length=50).tail(1).item()
-    ema45 = ta.ema(rates_frame["median"],length=45).tail(1).item()
-    ema40 = ta.ema(rates_frame["median"],length=40).tail(1).item()
-    ema35 = ta.ema(rates_frame["median"],length=35).tail(1).item()
-    ema30 = ta.ema(rates_frame["median"],length=30).tail(1).item()
-    ema25 = ta.ema(rates_frame["median"],length=25).tail(1).item()
-    ema20 = ta.ema(rates_frame["median"],length=20).tail(1).item()
+    rates_frame["median"]      = (rates_frame["low"]+rates_frame["high"])/2
+    rates_frame["median_mean"] = rates_frame["median"].rolling(rollingPeriod).mean()
+    rates_frame["median_std"]  = rates_frame["median"].rolling(rollingPeriod).std()
     
-    if(ema50<ema45 and ema45<ema40 and ema40<ema35 and ema35<ema30 and ema30<ema25 and ema25<ema20 and ema20<sma50):
-        EMARainbowSignals.append("BUY "+strTimeframe+" |")
-        return
-
+    rates_frame["median_upper_boundary"] = rates_frame["median_mean"] + 2*rates_frame["median_std"]
+    rates_frame["median_lower_boundary"] = rates_frame["median_mean"] - 2*rates_frame["median_std"]
+    
+    
+    previousOpen          = rates_frame.iloc[-2].open
+    previousClose         = rates_frame.iloc[-2].close
+    previousMean          = rates_frame.iloc[-2].median_mean
+    previousUpperBoundary = rates_frame.iloc[-2].median_upper_boundary
+    previousLowerBoundary = rates_frame.iloc[-2].median_lower_boundary
+    
+    currentOpen           = rates_frame.iloc[-1].open
+    currentClose          = rates_frame.iloc[-1].close
+    currentMean           = rates_frame.iloc[-1].median_mean
+    currentUpperBoundary  = rates_frame.iloc[-1].median_upper_boundary
+    currentLowerBoundary  = rates_frame.iloc[-1].median_lower_boundary
+    
+    
+    if(previousOpen<previousMean and previousOpen>previousLowerBoundary):
+        if(previousClose>previousUpperBoundary):
+            if(currentClose>currentOpen):
+                BollingerSignals.append("BUY NOW")
+                BollingerSignalsTF.append("strTimeframe")
+            else:
+                BollingerSignals.append("BUY POSSIBILITY")
+                BollingerSignalsTF.append("strTimeframe")
                 
-    if(ema50>ema45 and ema45>ema40 and ema40>ema35 and ema35>ema30 and ema30>ema25 and ema25>ema20 and ema20>sma50):
-        EMARainbowSignals.append("SELL "+strTimeframe+" |")
-        return
+    if(previousOpen>previousMean and previousOpen<previousUpperBoundary):
+        if(previousClose<previousLowerBoundary):
+            if(currentClose<currentOpen):
+                BollingerSignals.append("SELL NOW")
+                BollingerSignalsTF.append("strTimeframe")
+            else:
+                BollingerSignals.append("SELL POSSIBILITY")
+                BollingerSignalsTF.append("strTimeframe")
+                
+                
+    
 
 
 # In[ ]:
@@ -123,13 +148,14 @@ while(True):
     display = banner
     for cp in currency_pairs:
         display+="["+cp+"]"+"\n"
-        EMARainbowSignals =[]
+        BollingerSignals =[]
+        BollingerSignalsTF =[]
         for t in range(len(mt5Timeframe)):
             rates_frame = getRates(cp, mt5Timeframe[t], numCandles)
             getSignals(rates_frame,strTimeframe[t])
-        if(len(EMARainbowSignals)>0):
-            display+="******************************"+"\n"
-            display+=" ".join(EMARainbowSignals)+"\n"
+        if(len(BollingerSignals)>0):
+            display+=" ".join(BollingerSignals)+"\n"
+            display+=" ".join(BollingerSignalsTF)+"\n"
             winsound.Beep(freq, duration)
 
         display+="==============================\n"
