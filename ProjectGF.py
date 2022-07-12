@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 ##########################################################################################
@@ -31,7 +31,7 @@ if not mt5.initialize():
     quit()
 
 
-# In[ ]:
+# In[2]:
 
 
 # MT5 TIMEFRAME
@@ -66,59 +66,90 @@ with open('instruments.txt') as f:
 mt5Timeframe   = [M1,M2,M3,M4,M5,M6,M10,M12,M15,M20,M30,H1,H2,H3,H4,H6,H8,H12,D1]
 strTimeframe   = ["M1","M2","M3","M4","M5","M6","M10","M12","M15","M20","M30","H1","H2","H3","H4","H6","H8","H12","D1"]
 
-numCandles     = 25
+numCandles     = 1000
 offset         = 1
-rollingPeriod  = 20
 
-BollingerSignals   = []
+EMARainbowSignals   = []
+
+mt5Timeframe   = [M1]
+strTimeframe   = ["M1"]
+currency_pairs = ["EURUSD"]
 ##########################################################################################
 
 
-# In[ ]:
+# In[3]:
 
 
 def getSignals(rates_frame,strTimeframe):
     
-    rates_frame["median"]      = (rates_frame["low"]+rates_frame["high"])/2
-    rates_frame["median_mean"] = rates_frame["median"].rolling(rollingPeriod).mean()
-    rates_frame["median_std"]  = rates_frame["median"].rolling(rollingPeriod).std()
-    
-    rates_frame["median_upper_boundary"] = rates_frame["median_mean"] + 2*rates_frame["median_std"]
-    rates_frame["median_lower_boundary"] = rates_frame["median_mean"] - 2*rates_frame["median_std"]
+    rates_frame["median"] = (rates_frame["high"]+rates_frame["low"])/2
+    rates_frame["ema50"] = ta.ema(rates_frame["median"],length=50)
+    rates_frame["ema45"] = ta.ema(rates_frame["median"],length=45)
+    rates_frame["ema40"] = ta.ema(rates_frame["median"],length=40)
+    rates_frame["ema35"] = ta.ema(rates_frame["median"],length=35)
+    rates_frame["ema30"] = ta.ema(rates_frame["median"],length=30)
+    rates_frame["ema25"] = ta.ema(rates_frame["median"],length=25)
+    rates_frame["ema20"] = ta.ema(rates_frame["median"],length=20)
     
     
     previousOpen          = rates_frame.iloc[-2].open
     previousClose         = rates_frame.iloc[-2].close
-    previousMean          = rates_frame.iloc[-2].median_mean
-    previousUpperBoundary = rates_frame.iloc[-2].median_upper_boundary
-    previousLowerBoundary = rates_frame.iloc[-2].median_lower_boundary
-    
-    currentOpen           = rates_frame.iloc[-1].open
-    currentClose          = rates_frame.iloc[-1].close
-    currentMean           = rates_frame.iloc[-1].median_mean
-    currentUpperBoundary  = rates_frame.iloc[-1].median_upper_boundary
-    currentLowerBoundary  = rates_frame.iloc[-1].median_lower_boundary
+    previousEMA50         = rates_frame.iloc[-2].ema50
+    previousEMA45         = rates_frame.iloc[-2].ema45
+    previousEMA40         = rates_frame.iloc[-2].ema40
+    previousEMA35         = rates_frame.iloc[-2].ema35
+    previousEMA30         = rates_frame.iloc[-2].ema30
+    previousEMA25         = rates_frame.iloc[-2].ema25
+    previousEMA20         = rates_frame.iloc[-2].ema20
     
     
+    currentOpen          = rates_frame.iloc[-1].open
+    currentClose         = rates_frame.iloc[-1].close
+    currentEMA50         = rates_frame.iloc[-1].ema50
+    currentEMA45         = rates_frame.iloc[-1].ema45
+    currentEMA40         = rates_frame.iloc[-1].ema40
+    currentEMA35         = rates_frame.iloc[-1].ema35
+    currentEMA30         = rates_frame.iloc[-1].ema30
+    currentEMA25         = rates_frame.iloc[-1].ema25
+    currentEMA20         = rates_frame.iloc[-1].ema20
+    
+    
+    if(previousEMA50<previousEMA45 and
+       previousEMA45<previousEMA40 and
+       previousEMA40<previousEMA35 and
+       previousEMA35<previousEMA30 and
+       previousEMA30<previousEMA25 and
+       previousEMA25<previousEMA20):
+        if(currentEMA50<currentEMA45 and
+           currentEMA45<currentEMA40 and
+           currentEMA40<currentEMA35 and
+           currentEMA35<currentEMA30 and
+           currentEMA30<currentEMA25 and
+           currentEMA25<currentEMA20):
+            pass
+    
+    
+    '''
     if(previousOpen<previousMean and previousOpen>previousLowerBoundary):
         if(previousClose>previousUpperBoundary):
             if(currentClose>currentOpen):
-                BollingerSignals.append("[BUY NOW | " +strTimeframe+"]")
+                EMARainbowSignals.append("[BUY NOW | " +strTimeframe+"]")
             else:
-                BollingerSignals.append("[BUY WATCH | " +strTimeframe+"]")
+                EMARainbowSignals.append("[BUY WATCH | " +strTimeframe+"]")
                 
     if(previousOpen>previousMean and previousOpen<previousUpperBoundary):
         if(previousClose<previousLowerBoundary):
             if(currentClose<currentOpen):
-                BollingerSignals.append("[SELL NOW | " +strTimeframe+"]")
+                EMARainbowSignals.append("[SELL NOW | " +strTimeframe+"]")
             else:
-                BollingerSignals.append("[SELL WATCH | " +strTimeframe+"]")
-                
-                
+                EMARainbowSignals.append("[SELL WATCH | " +strTimeframe+"]")
+    '''
     
+    rates_frame
+                
 
 
-# In[ ]:
+# In[4]:
 
 
 # Gets the most recent <numCandles> prices for a specified <currency_pair> and <mt5Timeframe>
@@ -131,7 +162,7 @@ def getRates(currency_pair, mt5Timeframe, numCandles):
 ##########################################################################################
 
 
-# In[ ]:
+# In[5]:
 
 
 banner = ""
@@ -143,12 +174,12 @@ while(True):
     display = banner
     for cp in currency_pairs:
         display+="["+cp+"]"+"\n"
-        BollingerSignals =[]
+        EMARainbowSignals =[]
         for t in range(len(mt5Timeframe)):
             rates_frame = getRates(cp, mt5Timeframe[t], numCandles)
             getSignals(rates_frame,strTimeframe[t])
-        if(len(BollingerSignals)>0):
-            display+=" ".join(BollingerSignals)+"\n"
+        if(len(EMARainbowSignals)>0):
+            display+=" ".join(EMARainbowSignals)+"\n"
             winsound.Beep(freq, duration)
 
         display+="==============================\n"
