@@ -108,7 +108,7 @@ def getSignals(rates_frame,strTimeframe):
                 BollingerSignalsTF.append("strTimeframe")
             else:
                 BollingerSignals.append("BUY POSSIBILITY")
-                BollingerSignalsTF.append("strTimeframe")
+                BollingerSignalsTF.append(strTimeframe)
                 
     if(previousOpen>previousMean and previousOpen<previousUpperBoundary):
         if(previousClose<previousLowerBoundary):
@@ -117,7 +117,7 @@ def getSignals(rates_frame,strTimeframe):
                 BollingerSignalsTF.append("strTimeframe")
             else:
                 BollingerSignals.append("SELL POSSIBILITY")
-                BollingerSignalsTF.append("strTimeframe")
+                BollingerSignalsTF.append(strTimeframe)
                 
                 
     
