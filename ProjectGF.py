@@ -104,15 +104,15 @@ def getSignals(rates_frame,strTimeframe):
         if(previousClose>previousUpperBoundary):
             if(currentClose>currentOpen):
                 BollingerSignals.append("[BUY NOW | " +strTimeframe+"]")
-    #        else:
-    #            BollingerSignals.append("[BUY WATCH | " +strTimeframe+"]")
+            else:
+                BollingerSignals.append("[BUY WATCH | " +strTimeframe+"]")
                 
     if(previousOpen>previousMean and previousOpen<previousUpperBoundary):
         if(previousClose<previousLowerBoundary):
             if(currentClose<currentOpen):
                 BollingerSignals.append("[SELL NOW | " +strTimeframe+"]")
-    #        else:
-    #            BollingerSignals.append("[SELL WATCH | " +strTimeframe+"]")
+            else:
+                BollingerSignals.append("[SELL WATCH | " +strTimeframe+"]")
                 
                 
     
