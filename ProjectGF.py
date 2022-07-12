@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 ##########################################################################################
@@ -31,7 +31,7 @@ if not mt5.initialize():
     quit()
 
 
-# In[2]:
+# In[ ]:
 
 
 # MT5 TIMEFRAME
@@ -73,7 +73,7 @@ EMARainbowSignals   = []
 ##########################################################################################
 
 
-# In[3]:
+# In[ ]:
 
 
 def getSignals(rates_frame,strTimeframe):
@@ -145,7 +145,7 @@ def getSignals(rates_frame,strTimeframe):
 ##########################################################################################
 
 
-# In[4]:
+# In[ ]:
 
 
 # Gets the most recent <numCandles> prices for a specified <currency_pair> and <mt5Timeframe>
@@ -158,7 +158,7 @@ def getRates(currency_pair, mt5Timeframe, numCandles):
 ##########################################################################################
 
 
-# In[5]:
+# In[ ]:
 
 
 banner = ""
