@@ -110,25 +110,24 @@ def getSignals(rates_frame,strTimeframe):
     currentEMA20         = rates_frame.iloc[-1].ema20
     
                     
-    if(previousEMA50>previousEMA45 and
-       previousEMA45>previousEMA40 and
-       previousEMA40>previousEMA35 and
-       previousEMA35>previousEMA30 and
-       previousEMA30>previousEMA25 and
-       previousEMA25>previousEMA20):
-        if(previousOpen<previousEMA20 and previousClose>previousEMA50):
-            if(currentClose>currentOpen and currentOpen>currentEMA50):
-                EMARainbowSignals.append("[BUY | " +strTimeframe+"]")
-                    
-    if(previousEMA50<previousEMA45 and
-       previousEMA45<previousEMA40 and
-       previousEMA40<previousEMA35 and
-       previousEMA35<previousEMA30 and
-       previousEMA30<previousEMA25 and
-       previousEMA25<previousEMA20):
-        if(previousOpen>previousEMA20 and previousClose<previousEMA50):
-            if(currentClose<currentOpen and currentOpen<currentEMA50):
-                EMARainbowSignals.append("[SELL | " +strTimeframe+"]")
+    if(currentEMA50<currentEMA45 and
+       currentEMA45<currentEMA40 and
+       currentEMA40<currentEMA35 and
+       currentEMA35<currentEMA30 and
+       currentEMA30<currentEMA25 and
+       currentEMA25<currentEMA20):
+        if(currentOpen < currentEMA50 and currentClose > currentEMA20):
+            EMARainbowSignals.append("[BUY | " +strTimeframe+"]")
+                
+                
+    if(currentEMA50>currentEMA45 and
+       currentEMA45>currentEMA40 and
+       currentEMA40>currentEMA35 and
+       currentEMA35>currentEMA30 and
+       currentEMA30>currentEMA25 and
+       currentEMA25>currentEMA20):
+        if(currentOpen > currentEMA50 and currentClose < currentEMA20):
+            EMARainbowSignals.append("[SELL | " +strTimeframe+"]")
 
 ##########################################################################################
 
