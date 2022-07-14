@@ -86,18 +86,7 @@ def getSignals(rates_frame,strTimeframe):
     rates_frame["ema30"] = ta.ema(rates_frame["median"],length=30)
     rates_frame["ema25"] = ta.ema(rates_frame["median"],length=25)
     rates_frame["ema20"] = ta.ema(rates_frame["median"],length=20)
-    
-    
-    previousOpen          = rates_frame.iloc[-2].open
-    previousClose         = rates_frame.iloc[-2].close
-    previousEMA50         = rates_frame.iloc[-2].ema50
-    previousEMA45         = rates_frame.iloc[-2].ema45
-    previousEMA40         = rates_frame.iloc[-2].ema40
-    previousEMA35         = rates_frame.iloc[-2].ema35
-    previousEMA30         = rates_frame.iloc[-2].ema30
-    previousEMA25         = rates_frame.iloc[-2].ema25
-    previousEMA20         = rates_frame.iloc[-2].ema20
-    
+
     
     currentOpen          = rates_frame.iloc[-1].open
     currentClose         = rates_frame.iloc[-1].close
